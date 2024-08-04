@@ -1,6 +1,6 @@
 html,
 body {
-  max-width: auto;
+  max-width: 100;
   margin: 0;
   height: 100%;
   padding: 0;
@@ -71,4 +71,7 @@ body {
     opacity: 0;
     transform: translateY(-50px);
   }
+}
+.body {
+  overflow-y: auto
 }
