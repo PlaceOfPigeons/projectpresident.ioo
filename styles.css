@@ -1,5 +1,6 @@
 html,
 body {
+  vertical-align:bottom
   position: flex;
   max-width: 100;
   margin: 0;
