@@ -1,21 +1,322 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" /> 
     <title>Project President</title>
-    <link rel="stylesheet" href="styles.css" />
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,shrink-to-fit=no,viewport-fit=cover">
-  </head>
-  <body>
-    <div class="game">
-      <div class="header">
-        <img src="./assets/coin.png" alt="coin" />
-        <h2 class="score" id="score">42</h2>
-      </div>
-      <div class="circle">
-        <img id="circle" src="./assets/frog.png" alt="frog" />
-      </div>
+    <style>
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+            padding: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #2C2C2E;
+        }
+
+        #content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .header img {
+            width: 50px;
+            height: 50px;
+            margin-right: 14px;
+        }
+
+        .score {
+            color: #fff;
+            font-size: 36px;
+            font-weight: 800;
+            user-select: none;
+        }
+
+        .circle {
+            position: relative;
+        }
+
+        .circle img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            box-shadow: 0px 0px 16px 0px rgba(138, 143, 254, 0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .plus-one {
+            position: absolute;
+            font-family: Inter;
+            text-shadow: 0px 0px 4px rgba(234, 182, 64, 0.25);
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(180deg, #e8c547 0%, #ef882b 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            pointer-events: none;
+            user-select: none;
+            animation: move-up 2s forwards;
+        }
+
+        @keyframes move-up {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+        }
+
+        #footer {
+            display: flex;
+            justify-content: space-around;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background-color: #007bff;
+            padding: 10px 0;
+        }
+
+        .footer-button {
+            background-color: #fff;
+            color: #007bff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        /* Modal styles */
+        #menu-modal, #referral-modal, #top-modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        #menu-content, #referral-content, #top-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            height: 400px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        #menu-content img, #top-content img {
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #desktop-message {
+            display: none;
+            text-align: center;
+            font-size: 1.5rem;
+            color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <div class="header">
+            <img src="./assets/coin.png" alt="coin" />
+            <h2 class="score" id="score">0</h2>
+        </div>
+        <div class="circle">
+            <img id="circle" src="./assets/frog.png" alt="frog" />
+            <div id="click-bonus" class="plus-one"></div>
+        </div>
+        <button id="upgrade">Upgrade (Cost: 1)</button>
     </div>
-    <script src="app.js" defer></script>
-  </body>
+
+    <!-- Modal structure -->
+    <div id="menu-modal">
+        <div id="menu-content">
+            <span class="close" onclick="closeModal('menu')">&times;</span>
+            <h2>Меню</h2>
+            <img src="https://via.placeholder.com/200" alt="President">
+            <button id="subscribe-button" onclick="window.location.href='https://t.me/projectpresidentofficial'">Подписаться</button>
+        </div>
+    </div>
+
+    <div id="referral-modal">
+        <div id="referral-content">
+            <span class="close" onclick="closeModal('referrals')">&times;</span>
+            <h2>Referral System</h2>
+            <div id="referral-ranking">
+                <!-- Rankings will be updated dynamically -->
+            </div>
+            <a href="https://example.com?ref=yourReferralCode" target="_blank" id="referral-link">Invite Friends with this Referral Link</a>
+        </div>
+    </div>
+
+    <div id="top-modal">
+        <div id="top-content">
+            <span class="close" onclick="closeModal('top')">&times;</span>
+            <h2>Top 100 Users</h2>
+            <div id="top-ranking">
+                <!-- Top users will be updated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <div id="footer">
+        <button class="footer-button" onclick="showSection('menu')">Меню</button>
+        <button class="footer-button" onclick="showSection('referrals')">Рефералы</button>
+        <button class="footer-button" onclick="showSection('top')">Топ</button>
+    </div>
+
+    <script>
+        let score = parseInt(localStorage.getItem('score')) || 0;
+        let clickValue = parseInt(localStorage.getItem('clickValue')) || 1;
+        let upgradeCost = parseInt(localStorage.getItem('upgradeCost')) || 1;
+        const circle = document.getElementById('circle');
+        const scoreDisplay = document.getElementById('score');
+        const upgradeButton = document.getElementById('upgrade');
+        const clickBonus = document.getElementById('click-bonus');
+        const menuModal = document.getElementById('menu-modal');
+        const referralModal = document.getElementById('referral-modal');
+        const topModal = document.getElementById('top-modal');
+        const referralRanking = document.getElementById('referral-ranking');
+        const topRanking = document.getElementById('top-ranking');
+
+        scoreDisplay.textContent = score;
+        upgradeButton.textContent = `Upgrade (Cost: ${upgradeCost})`;
+
+        circle.addEventListener('click', (event) => {
+            event.preventDefault();
+            score += clickValue;
+            scoreDisplay.textContent = score;
+            localStorage.setItem('score', score);
+
+            clickBonus.textContent = `+${clickValue}`;
+            const rect = circle.getBoundingClientRect();
+            clickBonus.style.left = `${event.clientX - rect.left}px`;
+            clickBonus.style.top = `${event.clientY - rect.top}px`;
+            clickBonus.style.opacity = '1';
+            clickBonus.style.transform = `translate(-50%, -100%)`;
+            setTimeout(() => {
+                clickBonus.style.opacity = '0';
+            }, 500);
+        });
+
+        upgradeButton.addEventListener('click', () => {
+            if (score >= upgradeCost) {
+                score -= upgradeCost;
+                clickValue *= 2;
+                upgradeCost *= 10;
+                scoreDisplay.textContent = score;
+                localStorage.setItem('score', score);
+                localStorage.setItem('clickValue', clickValue);
+                localStorage.setItem('upgradeCost', upgradeCost);
+                upgradeButton.textContent = `Upgrade (Cost: ${upgradeCost})`;
+            }
+        });
+
+        function updateReferralRanking() {
+            const rankings = [
+                { name: 'User1', referrals: 5 },
+                { name: 'User2', referrals: 3 },
+                { name: 'User3', referrals: 2 },
+            ];
+
+            referralRanking.innerHTML = '<h3>Referral Rankings</h3>';
+            rankings.forEach(rank => {
+                const div = document.createElement('div');
+                div.classList.add('ranking-item');
+                div.innerHTML = `<strong>${rank.name}</strong> - ${rank.referrals} referrals`;
+                referralRanking.appendChild(div);
+            });
+        }
+
+        function updateTopRanking() {
+            const topUsers = [            { name: 'UserA', score: 1000 },
+            { name: 'UserB', score: 800 },
+            { name: 'UserC', score: 600 },
+        ];
+
+        topRanking.innerHTML = '<h3>Top Users</h3>';
+        topUsers.forEach(user => {
+            const div = document.createElement('div');
+            div.classList.add('ranking-item');
+            div.innerHTML = `<strong>${user.name}</strong> - ${user.score} score`;
+            topRanking.appendChild(div);
+        });
+    }
+
+    function showSection(section) {
+        switch (section) {
+            case 'menu':
+                menuModal.style.display = 'block';
+                break;
+            case 'referrals':
+                updateReferralRanking();
+                referralModal.style.display = 'block';
+                break;
+            case 'top':
+                updateTopRanking();
+                topModal.style.display = 'block';
+                break;
+            default:
+                break;
+        }
+    }
+
+    function closeModal(modal) {
+        switch (modal) {
+            case 'menu':
+                menuModal.style.display = 'none';
+                break;
+            case 'referrals':
+                referralModal.style.display = 'none';
+                break;
+            case 'top':
+                topModal.style.display = 'none';
+                break;
+            default:
+                break;
+        }
+    }
+</script>
+</body>
 </html>
